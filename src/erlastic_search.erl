@@ -653,7 +653,7 @@ aliases(Params, Body) ->
 %%--------------------------------------------------------------------
 -type index() :: binary().
 -type type() :: binary().
--type id() :: binary().
+-type id() :: binary() | undefined.
 -type headers() :: [tuple()].
 -type metadata_tuple() :: {index(), type(), id()} |
                           {index(), type(), id(), headers()} |
@@ -699,21 +699,17 @@ commas([H | T]) ->
 
 build_header(Operation, Index, Type, Id, HeaderInformation) ->
     Header1 = [
-      {<<"_index">>, Index}
+      {<<"_index">>, Index},
+      {<<"_type">>, Type}
       | HeaderInformation
     ],
 
-    Header2 = case Type =:= undefined of
+    Header2 = case Id =:= undefined of
                 true -> Header1;
-                false -> [{<<"_type">>, Type} | Header1]
+                false -> [{<<"_id">>, Id} | Header1]
               end,
 
-    Header3 = case Id =:= undefined of
-                true -> Header2;
-                false -> [{<<"_id">>, Id} | Header2]
-              end,
-
-    jsx:encode([{erlang:atom_to_binary(Operation, utf8), Header3}]).
+    jsx:encode([{erlang:atom_to_binary(Operation, utf8), Header2}]).
 
 build_body(delete, no_body) ->
     [<<"\n">>];
