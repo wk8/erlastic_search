@@ -740,4 +740,3 @@ build_body(_Operation, Doc) ->
 -spec maybe_encode_doc(binary() | erlastic_json()) -> binary().
 maybe_encode_doc(Bin) when is_binary(Bin) -> Bin;
 maybe_encode_doc(Doc) when is_list(Doc); is_tuple(Doc); is_map(Doc) -> erls_json:encode(Doc).
-
